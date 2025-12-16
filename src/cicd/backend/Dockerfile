@@ -1,5 +1,9 @@
-# Dockerfile (Backend)
 FROM python:3.11-slim
+
+LABEL org.opencontainers.image.title="Square Calculator Backend"
+LABEL org.opencontainers.image.description="FastAPI backend for square calculation"
+LABEL org.opencontainers.image.version="0.1.0"
+LABEL org.opencontainers.image.authors="Dacodemaniak"
 
 ENV PYTHONUNBUFFERED 1
 

@@ -1,5 +1,8 @@
-# frontend/Dockerfile
 FROM python:3.11-slim
+
+LABEL org.opencontainers.image.title="Square Calculator Frontend"
+LABEL org.opencontainers.image.description="Streamlit frontend for square calculation"
+LABEL org.opencontainers.image.version="0.1.0"
 
 ENV PYTHONUNBUFFERED 1
 

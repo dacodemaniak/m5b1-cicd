@@ -25,6 +25,9 @@ If not, a 422 status is returned
 **Load frontend**
 `http://localhost:8501`
 
-## Webhook
+## Webhook Discord
 
 URL (secret): CI/CD Bot on Discord Server
+
+
+## Dockerhub deployment
