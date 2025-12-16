@@ -11,6 +11,23 @@ on:
       - 'setup.py'
       - 'docker-compose.yml'
 
+  workflow_dispatch:  # Manual trigger
+    inputs:
+      environment:
+        description: 'Environnement à tester'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+      run-tests:
+        description: 'Exécuter les tests'
+        required: true
+        default: true
+        type: boolean
+
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
