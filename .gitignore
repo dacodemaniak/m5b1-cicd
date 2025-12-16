@@ -1,2 +1,5 @@
 # eggs
 *.egg-info
+
+# Caches
+__pycache__

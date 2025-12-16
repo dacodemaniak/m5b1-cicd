@@ -7,7 +7,7 @@ from cicd.backend.modules.calcul import square
     (4, 16),
     (0, 0),
     (-5, 25),
-    (100, 1000)
+    (100, 10000)
 ])
 def test_square_valid_inputs(input_val: int, expected_output: int):
     assert square(input_val) == expected_output

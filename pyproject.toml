@@ -1,57 +1,57 @@
-[tool.poetry]
-name = "m5b1-ci-cd-backend"
+# pyproject.toml
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "m5b1-ci-cd"
 version = "0.1.0"
-description = "Backend pour le calcul de carré avec FastAPI et Pydantic."
-authors = ["Dacodemaniak <jla.webprojet@gmail.com>"]
+description = "Backend pour le calcul de carré avec FastAPI et Pydantic, et Frontend Streamlit."
+authors = [
+    {name = "Dacodemaniak", email = "jla.webprojet@gmail.com"},
+]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "backend"}]
+requires-python = ">=3.11"
 
-# --- Execution dependencies ---
-[tool.poetry.dependencies]
-python = "^3.11"
-fastapi = "^0.109.0"
-pydantic = "^2.5.3"
-# Uvicorn serving FastAPI
-uvicorn = {extras = ["standard"], version = "^0.27.0"}
+# Dépendances d'exécution (Production: Backend + Frontend)
+dependencies = [
+    "fastapi>=0.109.0",
+    "pydantic>=2.5.3",
+    # Uvicorn pour servir FastAPI
+    "uvicorn[standard]>=0.27.0",
+    # Frontend Streamlit et Logs
+    "streamlit>=1.30.0",
+    "loguru>=0.7.2",
+    # Nécessaire pour les requêtes HTTP du Frontend vers le Backend
+    "requests>=2.31.0", 
+]
 
-# --- Frontend dependencies ---
-# Si le front-end a son propre Dockerfile, cette section peut être omise ou déplacée
-streamlit = "^1.30.0"
-loguru = "^0.7.2"
+# Dépendances de développement (Tests et Outils)
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.4",
+    "pytest-cov>=4.1.0",
+    "black>=23.12.1",
+    "isort>=5.13.2",
+    "flake8>=7.0.0",
+]
 
+# Configuration des outils pour le CI (Pytest, Black, Isort)
+# Ces configurations restent valides même sans Poetry
 
-# --- Dev dependencies ---
-[tool.poetry.group.dev.dependencies]
-# Pytest for unit testing
-pytest = "^7.4.4"
-# Code coverage
-pytest-cov = "^4.1.0"
-# Linting and Formating
-black = "^23.12.1"
-isort = "^5.13.2"
-flake8 = "^7.0.0"
-
-
-# --- Configuration des outils ---
-
-# Pytest configuration
 [tool.pytest.ini_options]
-# Where to find files
-pythonpath = ["backend/modules"] 
-# tests
-testpaths = "backend/tests" 
-addopts = "--strict-markers --cov=backend/modules --cov-report=term-missing"
+# Correction des chemins d'accès pour la structure réelle src/cicd/
+pythonpath = ["src/cicd/backend/modules"] 
+testpaths = "src/cicd/backend/tests" 
+addopts = "--strict-markers --cov=src/cicd/backend/modules --cov-report=term-missing"
 
-
-# Black configuration (code Formating)
 [tool.black]
 line-length = 88
-target-version = ['py310']
+target-version = ['py311']
 include = '\.pyi?$'
 
-
-# Isort configuration (imports sorting)
 [tool.isort]
 profile = "black"
 multi_line_output = 3
@@ -61,6 +61,6 @@ use_parentheses = true
 ensure_newline_before_comments = true
 line_length = 88
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["cicd*"]

@@ -2,7 +2,7 @@ services:
   backend:
     build:
       context: .
-      dockerfile: backend/Dockerfile # C'est le Dockerfile du Backend
+      dockerfile: src/cicd/backend/Dockerfile
     image: square-backend
     container_name: square_backend
     ports:
@@ -15,11 +15,11 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: frontend/Dockerfile # Le Dockerfile que nous venons de créer
+      dockerfile: src/cicd/frontend/Dockerfile
     image: square-frontend
     container_name: square_frontend
     ports:
-      - "8501:8501" # Port par défaut de Streamlit
+      - "8501:8501"
     environment:
       # Optionnel, mais bonne pratique, bien que le nom de service suffise
       API_BASE_URL: http://backend:8000 
