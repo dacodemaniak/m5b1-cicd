@@ -2,7 +2,7 @@
 name = "m5b1-ci-cd-backend"
 version = "0.1.0"
 description = "Backend pour le calcul de carré avec FastAPI et Pydantic."
-authors = ["Dacodemaniak <jla.webprojet@gmail.com"]
+authors = ["Dacodemaniak <jla.webprojet@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 packages = [{include = "backend"}]

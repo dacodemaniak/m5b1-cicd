@@ -1,0 +1,49 @@
+name: CI Backend (Tests & Build)
+
+on:
+  push:
+    branches:
+      - main  # Trigger workflow as main was pushed
+    paths:
+      - 'backend/**' # Only if backend was changed
+      - 'pyproject.toml'
+      - 'poetry.lock'
+      - 'Dockerfile'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: ⬇️ Checkout du code
+      uses: actions/checkout@v4
+
+    # 1. Python environment settings
+    - name: 🐍 Python 3.11 settings
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11' 
+
+    # 2. Poetry installation
+    - name: 📦 Poetry installation
+      run: pip install poetry
+
+    # 3. Caching dependencies. Subsequent builds will be quicker
+    # Cache based on poetry.lock
+    - name: ⚙️ Poetry cache configuration
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pypoetry
+        key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-poetry-
+
+    # 4. Dependencies installation
+    - name: 🚀 Dependencies installation (main + dev)
+      # '--with dev' for all dependencies (dev : pytest, black, ...)
+      run: poetry install --with dev
+
+    # 5. Run tests
+    - name: 🧪 Run tests with coverage
+      working-directory: . 
+      run: poetry run pytest
