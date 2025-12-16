@@ -52,6 +52,19 @@ jobs:
           pip install fastapi pydantic uvicorn streamlit loguru requests pytest pytest-cov black isort flake8
         fi
 
+    # 🔔 Webhook notification
+    - name: 🔔 Début des tests - Notification Discord
+      if: always()
+      uses: sarisia/actions-status-discord@v1
+      with:
+        webhook: ${{ secrets.CICD_PIPELINE_DISCORD }}
+        status: ${{ job.status }}
+        title: "🚀 Démarrage des tests CI/CD"
+        description: "Exécution des tests pour le commit : **${{ github.event.head_commit.message }}**"
+        color: 0x3498db
+        username: "CI/CD Bot"
+        avatar: "https://cdn-icons-png.flaticon.com/512/270/270798.png"
+
     - name: ⚙️ PYTHONPATH configuration
       run: |
         echo "PYTHONPATH=$PYTHONPATH:${{ github.workspace }}/src" >> $GITHUB_ENV
@@ -59,6 +72,30 @@ jobs:
     - name: 🧪 Backend unit test
       run: |
         pytest src/cicd/backend/tests/
+
+    - name: 📊 Générer le rapport de couverture
+      run: |
+        pytest src/cicd/backend/tests/ --cov=src/cicd/backend/modules --cov-report=xml:coverage.xml
+
+    # 🔔 Results notifications
+    - name: 🔔 Tests results - Discord Notification
+      if: always()
+      uses: sarisia/actions-status-discord@v1
+      with:
+        webhook: ${{ secrets.CICD_PIPELINE_DISCORD }}
+        status: ${{ job.status }}
+        title: "✅ Tests ${{ job.status == 'success' && 'réussis' || 'échoués' }}"
+        description: |
+          **Commit :** ${{ github.event.head_commit.message }}
+          **Auteur :** ${{ github.actor }}
+          **Branche :** ${{ github.ref_name }}
+          
+          ${{ steps.tests.outcome == 'success' && '🎉 Tous les tests ont passé !' || '❌ Certains tests ont échoué.' }}
+          
+          [Voir les détails](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+        color: ${{ job.status == 'success' && '0x2ecc71' || '0xe74c3c' }}
+        username: "CI/CD Bot"
+        avatar: "https://cdn-icons-png.flaticon.com/512/270/270798.png"
 
     - name: 🔨 Docker image build
       run: |
@@ -73,3 +110,24 @@ jobs:
         # Try health check
         curl -f http://localhost:8000/health || exit 1
         docker compose down
+
+    # 🔔 Final notification
+    - name: 🔔 Pipeline ended - Discord Notification
+      if: always()
+      uses: sarisia/actions-status-discord@v1
+      with:
+        webhook: ${{ secrets.CICD_PIPELINE_DISCORD }}
+        status: ${{ job.status }}
+        title: "🏁 Pipeline ${{ job.status == 'success' && 'successfuly ended' || 'failed' }}"
+        description: |
+          **Final status :** ${{ job.status }}
+          **Duration :** ~${{ job.container.time }}$
+          
+          Summary :
+          - ✅ Tests done
+          - 🐳 Docker image build
+          - 🚀 Deploying tested
+          
+          [See complete workflow](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+        color: ${{ job.status == 'success' && '0x2ecc71' || '0xe74c3c' }}
+        username: "CI/CD Bot"
