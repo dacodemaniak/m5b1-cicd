@@ -10,7 +10,12 @@ COPY pyproject.toml /app/
 # Copier le code Streamlit et les modules nécessaires
 COPY src/cicd/frontend/app.py /app/
 
-RUN pip install --no-cache-dir .
+# Install Python dependencies
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir \
+    streamlit \
+    loguru \
+    requests
 
 
 ENV API_BASE_URL http://backend:8000

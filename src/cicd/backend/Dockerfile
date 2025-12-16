@@ -5,14 +5,20 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
 
+ENV PYTHONPATH=/app/src
 
 COPY pyproject.toml /app/
-# NOTE: Nous n'avons pas besoin de setup.cfg ou requirements.txt avec cette approche
 
 # Copier le code source
-COPY src/cicd/backend /app/src
+COPY src/ /app/src
 
-RUN pip install --no-cache-dir .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir \
+    fastapi \
+    pydantic \
+    uvicorn
 
 
 EXPOSE 8000
